@@ -64,7 +64,7 @@ def get_log_from_DB(discID: str, banner: str, log_num: int):
         pull_count = int(player_result[banner_pull_count_total][log_num])
     else:
         return None
-    results = logs.find({'discID': discID, 'logNum': log_num})
+    results = logs.find({'discID': discID, 'logNum': log_num, 'banner': banner}).sort('pullNum', 1)
     entries = []
     for index in range(pull_count):
         pull_num = results[index]['pullNum']
