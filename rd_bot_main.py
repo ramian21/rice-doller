@@ -170,8 +170,10 @@ async def on_message(message):
     if not (contents[0].startswith('!rd')):
         return
 
-    # debug 
-    print(message.content)
+    # debug purposes 
+    user = str(message.author)
+    command = str(message.content)
+    print('{:s}:{:s}'.format(user, command))
 
     # get unique discord identifier
     discID = str(message.author.id)
