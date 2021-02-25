@@ -206,6 +206,9 @@ async def on_message(message):
         await message.channel.send(help_msg)
         return
 
+    if len(contents) < 3:
+        await message.channel.send(usage_message)
+        return
     # if not a help argument, arg2 should always be the banner argument
     banner_arg = contents[2].lower()
 
@@ -238,6 +241,9 @@ async def on_message(message):
             await message.channel.send(usage_message)
             return
         num_iterations = int(log_msg)
+        if num_iterations > 90:
+            await message.channel.send('Max number of entries to bulk add is 90. Please do not abuse this function.')
+            return
         for x in range(num_iterations):
             pull_count = add_pull(discID, banner, '')
         await message.channel.send('You pulled {:d} times from the {:s} banner. You are now at {:d} pulls.'.format(num_iterations, banner, pull_count))
@@ -255,6 +261,9 @@ async def on_message(message):
         return
     # display previous logs on specific banner
     elif action_arg == 'p' or action_arg == 'past' or action_arg == 'previous':
+        if not log_msg.isnumeric():
+            await message.channel.send(usage_message)
+            return
         log_num = int(log_msg)
         entries = previous_log_pull(discID, banner, log_num)
         if entries == None:
