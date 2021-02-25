@@ -132,7 +132,7 @@ def display_help(help_action: str = ''):
     return help_string
 
 
-def format_log(entries, banner):
+def format_log(entries, banner, log_num):
     page_limit = 30
     plimit_in_entries = int(len(entries) / page_limit) + 1
     log_strings = []
@@ -140,8 +140,12 @@ def format_log(entries, banner):
         inner_range = min(page_limit, len(entries) -
                           (up_to_page_limit * page_limit))
         page_number = up_to_page_limit + 1
-        log_string = '```Current pulls on {:s} banner: ({:d}/{:d})\n'.format(
-            banner, page_number, plimit_in_entries)
+        if log_num == 0:
+            log_string = '```Current pulls on {:s} banner: ({:d}/{:d})\n'.format(
+                banner, page_number, plimit_in_entries)
+        else:
+            log_string = '```Pull Log#{:d} on {:s} banner: ({:d}/{:d})\n'.format(
+                log_num, banner,  page_number, plimit_in_entries)
         for x in range(inner_range):
             entryindex = (up_to_page_limit * page_limit) + x
             log_string += entries[entryindex]
@@ -258,7 +262,7 @@ async def on_message(message):
     # display current log on specific banner
     elif action_arg == 'l' or action_arg == 'log' or action_arg == 'list':
         entries = log_pull(discID, banner)
-        log_strings = format_log(entries, banner)
+        log_strings = format_log(entries, banner, 0)
         for log_string in log_strings:
             await message.channel.send(log_string)
         return
@@ -272,7 +276,7 @@ async def on_message(message):
         if entries == None:
             await message.channel.send('Log#{:d} not yet reached on {:s} banner. Try `!rd current {:s}`'.format(log_num, banner, banner))
             return
-        log_strings = format_log(entries, banner)
+        log_strings = format_log(entries, banner, log_num)
         for log_string in log_strings:
             await message.channel.send(log_string)
         return
