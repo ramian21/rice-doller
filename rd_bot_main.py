@@ -169,7 +169,7 @@ async def on_message(message):
         return
 
     # split command to parse
-    contents = message.content.split()
+    contents = message.content.split(' ')
 
     # if not a bot command, return
     if not (contents[0].startswith('!rd')):
@@ -235,7 +235,20 @@ async def on_message(message):
     log_msg = ''
     for count in range(3, len(contents)):
         log_msg += contents[count] + ' '
-    log_msg = log_msg.strip(' ')
+    log_msg = log_msg.strip(' \n')
+    log_msg_array = log_msg.split('\n')
+    # store in split array
+
+    # check split array length for possible bulk add
+    if len(log_msg_array) > 1 and action_arg == 'b' or action_arg == 'bulkadd':
+        num_iterations = len(log_msg_array)
+        for bulk_msg in log_msg_array:
+            pull_count = add_pull(discID, banner, bulk_msg)
+        await message.channel.send('You pulled {:d} times from the {:s} banner. You are now at {:d} pulls.'.format(num_iterations, banner, pull_count))
+        return
+    elif len(log_msg_array) > 1:
+        await message.channel.send(usage_message)
+        return 
 
     # add entry w/ possible log message on specific banner
     if action_arg == 'a' or action_arg == 'add':
